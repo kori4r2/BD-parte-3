@@ -1,9 +1,23 @@
+package project;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 /**
  *
  * @author Italo
@@ -13,7 +27,8 @@ public class MainMenu extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
-    public MainMenu() {
+    public MainMenu(MyOracleConnection connection){
+        this.connection = connection;
         initComponents();
     }
 
@@ -45,7 +60,26 @@ public class MainMenu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        Atleta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
+
+        jPanel1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jPanel1FocusGained(evt);
+            }
+        });
+
+        Atleta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AtletaMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                AtletaMouseEntered(evt);
+            }
+        });
         Atleta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AtletaActionPerformed(evt);
@@ -231,6 +265,29 @@ public class MainMenu extends javax.swing.JFrame {
             evt.consume();
     }//GEN-LAST:event_jTextField1KeyTyped
 
+    private void AtletaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AtletaMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AtletaMouseClicked
+
+    private void jPanel1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel1FocusGained
+
+    private void AtletaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AtletaMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AtletaMouseEntered
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        // TODO add your handling code here:
+        if(jTabbedPane1.getSelectedIndex() == 0){
+            // Atualiza os campos de combobox com as informações obtidas
+            ArrayList<String> nameList = new ArrayList<String>(Arrays.asList(connection.Selection("nome", "teste")));
+            //System.out.println(nameList);
+            DefaultComboBoxModel model = new DefaultComboBoxModel(nameList.toArray());
+            Atleta.setModel(model);
+        }
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -258,14 +315,22 @@ public class MainMenu extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainMenu().setVisible(true);
+                try{
+                    new MainMenu(new MyOracleConnection("8643412", "b")).setVisible(true);
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
+                    System.exit(1);
+                }
             }
         });
     }
 
+    private MyOracleConnection connection;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> Atleta;
     private javax.swing.JButton jButton1;
