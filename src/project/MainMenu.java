@@ -282,10 +282,20 @@ public class MainMenu extends javax.swing.JFrame {
         excluirButton.setText("Excluir");
 
         atualizarButton.setText("Atualizar");
+        atualizarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                atualizarButtonActionPerformed(evt);
+            }
+        });
 
         CancelarButton.setText("Cancelar");
 
         buscarResultadosDropdown.setToolTipText("");
+        buscarResultadosDropdown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarResultadosDropdownActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -465,16 +475,18 @@ public class MainMenu extends javax.swing.JFrame {
         }else if(jTabbedPane1.getSelectedIndex() == 1){
             // Atualiza os campos de combobox com as informações obtidas
             // Atualiza a lista de atletas
-            ArrayList<String> nameList = new ArrayList<String>(Arrays.asList(connection.selectColumns("nome", "n_passaporte", "atleta")));
+            ArrayList<String> nameList = new ArrayList<String>(Arrays.asList(connection.selectColumn("n_passaporte", "atleta")));
             System.out.println(nameList);
             DefaultComboBoxModel model = new DefaultComboBoxModel(nameList.toArray());
             buscarAtletaDropdown.setModel(model);
+            buscarAtletaDropdown.setEnabled(false);
             
             // Atualiza a lista de médicos
-            nameList = new ArrayList<String>(Arrays.asList(connection.selectColumns("nome", "id", "medico")));
+            nameList = new ArrayList<String>(Arrays.asList(connection.selectColumn("id", "medico")));
             System.out.println(nameList);
             model = new DefaultComboBoxModel(nameList.toArray());
             buscarMedicoDropdown.setModel(model);
+            buscarMedicoDropdown.setEnabled(false);
             //jTabbedPane1.setEnabledAt(0, false);
             
             // Atualiza a lista de resultados
@@ -670,6 +682,45 @@ public class MainMenu extends javax.swing.JFrame {
         System.out.println("querry results = " + Arrays.toString(storedStrings[0]));
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void buscarResultadosDropdownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarResultadosDropdownActionPerformed
+        // TODO add your handling code here:
+        if(buscarResultadosDropdown.getSelectedIndex() > 0){
+            String[] result = storedStrings[0][buscarResultadosDropdown.getSelectedIndex() - 1].split("§");
+            buscarDescricaoArea.setText(result[6]);
+            buscarDiaDropdown.setSelectedIndex(Integer.parseInt(result[3]) - 1);
+            buscarMesDropdown.setSelectedIndex(Integer.parseInt(result[4]) - 1);
+            buscarAnoDropdown.setSelectedIndex(Integer.parseInt(result[5]) - 1900);
+            buscarAtletaDropdown.setEnabled(true);
+            buscarAtletaDropdown.setSelectedItem(result[0]);
+            buscarAtletaDropdown.setEnabled(false);
+            buscarMedicoDropdown.setEnabled(true);
+            buscarMedicoDropdown.setSelectedItem(result[1]);
+            buscarMedicoDropdown.setEnabled(false);
+        }
+    }//GEN-LAST:event_buscarResultadosDropdownActionPerformed
+
+    private void atualizarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_atualizarButtonActionPerformed
+        // TODO add your handling code here:
+        if(buscarResultadosDropdown.getSelectedIndex() > 0){
+            if(buscarDescricaoArea.getText().length() > 0){
+                String command = "update lesao_prova set descricao='" + buscarDescricaoArea.getText() + "'";
+                command += ", set medico=" + buscarMedicoDropdown.getSelectedItem().toString();
+                command += ", set atleta='" + buscarAtletaDropdown.getSelectedItem().toString() + "'";
+                command += ", set dia=" + buscarDiaDropdown.getSelectedItem().toString();
+                command += ", set mes=" + buscarMesDropdown.getSelectedItem().toString();
+                command += ", set ano=" + buscarAnoDropdown.getSelectedItem().toString();
+                String idavaliacao = storedStrings[0][buscarResultadosDropdown.getSelectedIndex() - 1].split("§")[2];
+                command += " where idavaliacao = " + idavaliacao;
+                connection.customCommand(command);
+                buscarErrorField.setText("Atualizacao bem sucedida");
+            }else{
+                buscarErrorField.setText("Escreva uma descricao");
+            }
+        }else{
+            buscarErrorField.setText("Selecione um resultado de busca para atualizar");
+        }
+    }//GEN-LAST:event_atualizarButtonActionPerformed
 
     /**
      * @param args the command line arguments

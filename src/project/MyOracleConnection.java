@@ -52,6 +52,17 @@ public class MyOracleConnection {
             }
         }
         
+        public void customCommand(String command){
+            try{
+                pstmt = connection.prepareStatement(command);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }catch(Exception e){
+                System.out.println("Error executing: " + command);
+                System.exit(1);
+            }
+        }
+        
         public String[] customSelection(String command){
             return new String[0];
         }

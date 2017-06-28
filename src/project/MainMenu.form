@@ -1796,6 +1796,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Atualizar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="atualizarButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="CancelarButton">
               <Properties>
@@ -1809,6 +1812,9 @@
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buscarResultadosDropdownActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
