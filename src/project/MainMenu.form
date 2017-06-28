@@ -1048,6 +1048,7 @@
           <SubComponents>
             <Component class="javax.swing.JComboBox" name="buscarAtletaDropdown">
               <Properties>
+                <Property name="editable" type="boolean" value="true"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
@@ -1063,6 +1064,7 @@
             </Component>
             <Component class="javax.swing.JComboBox" name="buscarMedicoDropdown">
               <Properties>
+                <Property name="editable" type="boolean" value="true"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
@@ -1791,6 +1793,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Excluir"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="excluirButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="atualizarButton">
               <Properties>
@@ -1804,6 +1809,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cancelar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelarButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="buscarResultadosDropdown">
               <Properties>

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Italo
+ * @author Henrique, Italo, Felipe
  */
 public class MyOracleConnection {
     
@@ -42,7 +42,6 @@ public class MyOracleConnection {
         
         public void insertInto(String table, String attributes){
             try{
-                System.out.println("insert into " + table + " values " + attributes);
                 pstmt = connection.prepareStatement("insert into " + table + " values " + attributes);
                 pstmt.executeUpdate();
                 pstmt.close();
@@ -52,13 +51,47 @@ public class MyOracleConnection {
             }
         }
         
-        public void customCommand(String command){
+        public void deleteLesao(String command, String id){
+            try{
+                pstmt = connection.prepareStatement(command);
+                pstmt.setString(1, id);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }catch(Exception e){
+                System.out.println("Error executing: " + command);
+                System.out.println(e.getMessage());
+                System.exit(1);
+            }
+        }
+        
+        public void updateLesao(String command){
             try{
                 pstmt = connection.prepareStatement(command);
                 pstmt.executeUpdate();
                 pstmt.close();
             }catch(Exception e){
                 System.out.println("Error executing: " + command);
+                System.out.println(e.getMessage());
+                System.exit(1);
+            }
+        }
+        
+        public void updateLesao(String command, String medico, String atleta, String dia, String mes,
+                                String ano, String descricao, String id){
+            try{
+                pstmt = connection.prepareStatement(command);
+                pstmt.setString(1 , medico);
+                pstmt.setString(2 , atleta);
+                pstmt.setString(3 , dia);
+                pstmt.setString(4 , mes);
+                pstmt.setString(5 , ano);
+                pstmt.setString(6 , descricao);
+                pstmt.setString(7 , id);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }catch(Exception e){
+                System.out.println("Error executing: " + command);
+                System.out.println(e.getMessage());
                 System.exit(1);
             }
         }
@@ -76,16 +109,13 @@ public class MyOracleConnection {
                     int nColumns = rs.getMetaData().getColumnCount();
                     String rowResult = new String("");
                     for(int i = 0; i < nColumns; i++){
-                        System.out.println("to na coluna " + i);
                         if(i > 0)
                             rowResult += "§";
                         rowResult += (rs.getString(i+1));
-                        System.out.println("saindo da coluna " + i);
                     }
                     list.add(rowResult);
                 }
                 
-                System.out.println(list);
                 String[] result = list.toArray(new String[list.size()]);
                 
                 return result;

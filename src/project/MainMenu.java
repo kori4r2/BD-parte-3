@@ -29,7 +29,6 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu(MyOracleConnection connection){
         this.connection = connection;
-        System.out.println("0");
         storedStrings = new String[3][];
         storedStrings[0] = new String[0];
         initComponents();
@@ -237,6 +236,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         jPanel2.setEnabled(false);
 
+        buscarAtletaDropdown.setEditable(true);
         buscarAtletaDropdown.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buscarAtletaDropdownMouseClicked(evt);
@@ -251,6 +251,7 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        buscarMedicoDropdown.setEditable(true);
         buscarMedicoDropdown.setToolTipText("");
 
         jLabel4.setText("Médico");
@@ -280,6 +281,11 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         excluirButton.setText("Excluir");
+        excluirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                excluirButtonActionPerformed(evt);
+            }
+        });
 
         atualizarButton.setText("Atualizar");
         atualizarButton.addActionListener(new java.awt.event.ActionListener() {
@@ -289,6 +295,11 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         CancelarButton.setText("Cancelar");
+        CancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelarButtonActionPerformed(evt);
+            }
+        });
 
         buscarResultadosDropdown.setToolTipText("");
         buscarResultadosDropdown.addActionListener(new java.awt.event.ActionListener() {
@@ -459,13 +470,11 @@ public class MainMenu extends javax.swing.JFrame {
             // Atualiza a lista de atletas
             ArrayList<String> nameList = new ArrayList<String>(Arrays.asList(connection.selectColumns("nome", "n_passaporte", "atleta")));
             nameList.add(0, " ");
-            System.out.println(nameList);
             DefaultComboBoxModel model = new DefaultComboBoxModel(nameList.toArray());
             inserirAtletaDropdown.setModel(model);
             // Atualiza a lista de médicos
             nameList = new ArrayList<String>(Arrays.asList(connection.selectColumns("nome", "id", "medico")));
             nameList.add(0, " ");
-            System.out.println(nameList);
             model = new DefaultComboBoxModel(nameList.toArray());
             inserirMedicoDropdown.setModel(model);
             //jTabbedPane1.setEnabledAt(1, false);
@@ -476,14 +485,12 @@ public class MainMenu extends javax.swing.JFrame {
             // Atualiza os campos de combobox com as informações obtidas
             // Atualiza a lista de atletas
             ArrayList<String> nameList = new ArrayList<String>(Arrays.asList(connection.selectColumn("n_passaporte", "atleta")));
-            System.out.println(nameList);
             DefaultComboBoxModel model = new DefaultComboBoxModel(nameList.toArray());
             buscarAtletaDropdown.setModel(model);
             buscarAtletaDropdown.setEnabled(false);
             
             // Atualiza a lista de médicos
             nameList = new ArrayList<String>(Arrays.asList(connection.selectColumn("id", "medico")));
-            System.out.println(nameList);
             model = new DefaultComboBoxModel(nameList.toArray());
             buscarMedicoDropdown.setModel(model);
             buscarMedicoDropdown.setEnabled(false);
@@ -677,9 +684,7 @@ public class MainMenu extends javax.swing.JFrame {
             condition += "%'";
         }
         
-        System.out.println("select * from lesao_prova" + condition);
         storedStrings[0] = connection.selectCondition("lesao_prova", condition);
-        System.out.println("querry results = " + Arrays.toString(storedStrings[0]));
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_buscarButtonActionPerformed
 
@@ -691,12 +696,8 @@ public class MainMenu extends javax.swing.JFrame {
             buscarDiaDropdown.setSelectedIndex(Integer.parseInt(result[3]) - 1);
             buscarMesDropdown.setSelectedIndex(Integer.parseInt(result[4]) - 1);
             buscarAnoDropdown.setSelectedIndex(Integer.parseInt(result[5]) - 1900);
-            buscarAtletaDropdown.setEnabled(true);
-            buscarAtletaDropdown.setSelectedItem(result[0]);
-            buscarAtletaDropdown.setEnabled(false);
-            buscarMedicoDropdown.setEnabled(true);
-            buscarMedicoDropdown.setSelectedItem(result[1]);
-            buscarMedicoDropdown.setEnabled(false);
+            buscarAtletaDropdown.setSelectedItem(result[1]);
+            buscarMedicoDropdown.setSelectedItem(result[0]);
         }
     }//GEN-LAST:event_buscarResultadosDropdownActionPerformed
 
@@ -704,15 +705,13 @@ public class MainMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(buscarResultadosDropdown.getSelectedIndex() > 0){
             if(buscarDescricaoArea.getText().length() > 0){
-                String command = "update lesao_prova set descricao='" + buscarDescricaoArea.getText() + "'";
-                command += ", set medico=" + buscarMedicoDropdown.getSelectedItem().toString();
-                command += ", set atleta='" + buscarAtletaDropdown.getSelectedItem().toString() + "'";
-                command += ", set dia=" + buscarDiaDropdown.getSelectedItem().toString();
-                command += ", set mes=" + buscarMesDropdown.getSelectedItem().toString();
-                command += ", set ano=" + buscarAnoDropdown.getSelectedItem().toString();
+                String command = "update lesao_prova set dia=" + buscarDiaDropdown.getSelectedItem().toString();
+                command += ", mes=" + buscarMesDropdown.getSelectedItem().toString();
+                command += ", ano=" + buscarAnoDropdown.getSelectedItem().toString();
+                command += ", descricao='" + buscarDescricaoArea.getText() + "'";
                 String idavaliacao = storedStrings[0][buscarResultadosDropdown.getSelectedIndex() - 1].split("§")[2];
                 command += " where idavaliacao = " + idavaliacao;
-                connection.customCommand(command);
+                connection.updateLesao(command);
                 buscarErrorField.setText("Atualizacao bem sucedida");
             }else{
                 buscarErrorField.setText("Escreva uma descricao");
@@ -721,6 +720,23 @@ public class MainMenu extends javax.swing.JFrame {
             buscarErrorField.setText("Selecione um resultado de busca para atualizar");
         }
     }//GEN-LAST:event_atualizarButtonActionPerformed
+
+    private void excluirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirButtonActionPerformed
+        // TODO add your handling code here:
+        if(buscarResultadosDropdown.getSelectedIndex() > 0){
+            String idavaliacao = storedStrings[0][buscarResultadosDropdown.getSelectedIndex() - 1].split("§")[2];
+            String command = "delete from aval_medica where id = ?";
+            connection.deleteLesao(command, idavaliacao);
+            buscarErrorField.setText("Exclusao bem sucedida");
+        }else{
+            buscarErrorField.setText("Selecione um resultado de busca para excluir");
+        }
+    }//GEN-LAST:event_excluirButtonActionPerformed
+
+    private void CancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarButtonActionPerformed
+        // TODO add your handling code here:
+        jTabbedPane1.setSelectedIndex(0);
+    }//GEN-LAST:event_CancelarButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -755,6 +771,8 @@ public class MainMenu extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try{
+                    // O usuario e a senha do server devem ser setados aqui como primeiro
+                    // e segundo parametro, respectivamente
                     new MainMenu(new MyOracleConnection("9293518", "a")).setVisible(true);
                 }catch(Exception e){
                     System.out.println(e.getMessage());
