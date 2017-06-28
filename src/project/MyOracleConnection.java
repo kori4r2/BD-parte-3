@@ -52,6 +52,38 @@ public class MyOracleConnection {
             }
         }
         
+        public String[] customSelection(String command){
+            return new String[0];
+        }
+        
+        public String[] selectCondition(String table, String condition){
+            ArrayList<String> list = new ArrayList<String>();
+            try{
+                stmt = connection.createStatement();
+                rs = stmt.executeQuery("select * from " + table + condition);
+                while(rs.next()){
+                    int nColumns = rs.getMetaData().getColumnCount();
+                    String rowResult = new String("");
+                    for(int i = 0; i < nColumns; i++){
+                        System.out.println("to na coluna " + i);
+                        if(i > 0)
+                            rowResult += "§";
+                        rowResult += (rs.getString(i+1));
+                        System.out.println("saindo da coluna " + i);
+                    }
+                    list.add(rowResult);
+                }
+                
+                System.out.println(list);
+                String[] result = list.toArray(new String[list.size()]);
+                
+                return result;
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                return new String[0];
+            }
+        }
+        
         public String selectMax(String atrib, String table){
             try{
                 rs = stmt.executeQuery("select max(" + atrib + ") from " + table);
